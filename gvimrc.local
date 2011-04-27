@@ -1,0 +1,4 @@
+set guioptions-=L
+set guioptions-=r
+set selectmode-=mouse
+colorscheme wombat
