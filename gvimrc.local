@@ -6,4 +6,4 @@ syntax enable
 set background=light
 colorscheme solarized
 
-autocmd VimEnter * NERDTreeClose
+"autocmd VimEnter * NERDTreeClose
