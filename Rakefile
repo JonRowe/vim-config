@@ -155,7 +155,7 @@ vim_plugin_task "scala",            "git://github.com/bdd/vim-scala.git"
 vim_plugin_task "gist-vim",         "git://github.com/mattn/gist-vim.git"
 
 #mine
-vim_plugin_task "minibuffexplorer",   "git://github.com/fholgado/minibufexpl.vim.git"
+# vim_plugin_task "minibuffexplorer",   "git://github.com/fholgado/minibufexpl.vim.git"
 
 vim_plugin_task "hammer",           "git://github.com/robgleeson/hammer.vim.git" do
   sh "gem install github-markup redcarpet"

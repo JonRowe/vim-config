@@ -1,5 +1,9 @@
 set guioptions-=L
 set guioptions-=r
 set selectmode-=mouse
-colorscheme wombat
-autocmd VimEnter * NERDTreeClose
+
+syntax enable
+set background=light
+colorscheme solarized
+
+"autocmd VimEnter * NERDTreeClose
