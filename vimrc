@@ -26,6 +26,8 @@ filetype plugin indent on
 set number
 set ruler
 syntax on
+" Status bar always shown?
+set laststatus=2
 
 " Set encoding
 set encoding=utf-8
