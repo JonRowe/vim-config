@@ -1,4 +1,5 @@
 Bundle 'YouCompleteMe'
 Bundle 'surround.vim'
 Bundle 'Align'
+Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-endwise'
