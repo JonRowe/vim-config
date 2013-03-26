@@ -40,6 +40,9 @@ set softtabstop=2
 set expandtab
 set list listchars=tab:\ \ ,trail:·
 
+" powerline
+set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
+
 " Searching
 set hlsearch
 set incsearch
