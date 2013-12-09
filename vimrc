@@ -1,4 +1,5 @@
 set nocompatible
+setlocal spell spelllang=en_gb
 
 " Vundle config
 filetype off
@@ -81,5 +82,9 @@ set iskeyword-=_
 
 syntax enable
 colorscheme solarized
+
+" ruby
+let ruby_space_errors = 1
+let ruby_no_expensive = 1
 
 let g:ackprg = 'ag --nogroup --nocolor --column'
