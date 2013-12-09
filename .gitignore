@@ -1,0 +1,10 @@
+backup
+bundle/vim-tmux-navigator
+bundle/vim-multiple-cursors
+bundle/fugitive
+bundle/vim-elixir
+bundle/unite.vim
+bundle/powerline
+bundle/vim-endwise
+bundle/vim-fugitive
+bundle/YouCompleteMe
