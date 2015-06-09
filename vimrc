@@ -79,6 +79,7 @@ set guioptions-=L
 set guioptions-=r
 set selectmode-=mouse
 set iskeyword-=_
+set tabpagemax=100
 
 syntax enable
 colorscheme solarized
