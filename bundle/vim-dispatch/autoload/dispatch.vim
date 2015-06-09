@@ -30,6 +30,8 @@ function! dispatch#shellescape(...) abort
   for arg in a:000
     if arg =~ '^[A-Za-z0-9_/.-]\+$'
       let args += [arg]
+    elseif &shell =~# 'c\@<!sh'
+      let args += [substitute(shellescape(arg), '\\\n', '\n', 'g')]
     else
       let args += [shellescape(arg)]
     endif
@@ -134,9 +136,9 @@ function! dispatch#isolate(keep, ...) abort
     let var = matchstr(line, '^\w\+\ze=')
     if !empty(var) && var !=# '_' && index(a:keep, var) < 0
       if &shell =~# 'csh'
-        let command += ['setenv '.var.' '.shellescape(eval('$'.var))]
+        let command += split('setenv '.var.' '.shellescape(eval('$'.var)), "\n")
       else
-        let command += ['export '.var.'='.shellescape(eval('$'.var))]
+        let command += split('export '.var.'='.dispatch#shellescape(eval('$'.var)), "\n")
       endif
     endif
   endfor
@@ -144,6 +146,10 @@ function! dispatch#isolate(keep, ...) abort
   let temp = tempname()
   call writefile(command, temp)
   return 'env -i ' . join(map(copy(a:keep), 'v:val."=\"$". v:val ."\" "'), '') . &shell . ' ' . temp
+endfunction
+
+function! s:current_compiler() abort
+  return get((empty(&l:makeprg) ? g: : b:), 'current_compiler', '')
 endfunction
 
 function! s:set_current_compiler(name) abort
@@ -194,7 +200,8 @@ function! dispatch#start_command(bang, command) abort
   return ''
 endfunction
 
-if !exists('g:DISPATCH_STARTS')
+if type(get(g:, 'DISPATCH_STARTS')) != type({})
+  unlet! g:DISPATCH_STARTS
   let g:DISPATCH_STARTS = {}
 endif
 
@@ -254,6 +261,7 @@ function! dispatch#compiler_for_program(args) abort
   let args = substitute(args, '^\s*'.pattern.'*', '', '')
   for [command, plugin] in items(g:dispatch_compilers)
     if strpart(args.' ', 0, len(command)+1) ==# command.' ' && !empty(plugin)
+          \ && !empty(findfile('compiler/'.plugin.'.vim', escape(&rtp, ' ')))
       return plugin
     endif
   endfor
@@ -309,16 +317,62 @@ function! dispatch#compiler_options(compiler) abort
   endtry
 endfunction
 
+function! s:completion_filter(results, query) abort
+  return filter(a:results, 'strpart(v:val, 0, len(a:query)) ==# a:query')
+endfunction
+
+function! s:compiler_complete(compiler, A, L, P) abort
+  let compiler = empty(a:compiler) ? 'make' : a:compiler
+
+  let fn = ''
+  for file in findfile('compiler/'.compiler.'.vim', escape(&rtp, ' '), -1)
+    for line in readfile(file)
+      let fn = matchstr(line, '-complete=custom\%(list\)\=,\zs\%(s:\)\@!\S\+')
+      if !empty(fn)
+        break
+      endif
+    endfor
+  endfor
+
+  if !empty(fn)
+    let results = call(fn, [a:A, a:L, a:P])
+  elseif exists('*CompilerComplete_' . compiler)
+    let results = call('CompilerComplete_' . compiler, [a:A, a:L, a:P])
+  else
+    let results = -1
+  endif
+
+  if type(results) == type([])
+    return results
+  elseif type(results) != type('')
+    unlet! results
+    let results = join(map(split(glob(a:A.'*'), "\n"),
+          \ 'isdirectory(v:val) ? v:val . dispatch#slash() : v:val'), "\n")
+  endif
+
+  return s:completion_filter(split(results, "\n"), a:A)
+endfunction
+
 function! dispatch#command_complete(A, L, P) abort
   if a:L =~# '\S\+\s\S\+\s'
-    return join(map(split(glob(a:A.'*'), "\n"), 'isdirectory(v:val) ? v:val . dispatch#slash() : v:val'), "\n")
+    let compiler = dispatch#compiler_for_program(matchstr(a:L, '\s\zs.*'))
+    return s:compiler_complete(compiler, a:A, a:L, a:P)
   else
     let executables = []
     for dir in split($PATH, has('win32') ? ';' : ':')
       let executables += map(split(glob(dir.'/'.a:A.'*'), "\n"), 'v:val[strlen(dir)+1 : -1]')
     endfor
-    return join(sort(dispatch#uniq(executables)), "\n")
+    return s:completion_filter(sort(dispatch#uniq(executables)), a:A)
   endif
+endfunction
+
+function! dispatch#make_complete(A, L, P) abort
+  try
+    silent doautocmd QuickFixCmdPre dispatch-make-complete
+    return s:compiler_complete(s:current_compiler(), a:A, a:L, a:P)
+  finally
+    silent doautocmd QuickFixCmdPost dispatch-make-complete
+  endtry
 endfunction
 
 if !exists('s:makes')
@@ -349,7 +403,7 @@ function! dispatch#compile_command(bang, args, count) abort
         \ 'action': 'make',
         \ 'background': a:bang,
         \ 'file': tempname(),
-        \ 'format': '%+G%.%#'
+        \ 'format': '%+I%.%#'
         \ }
 
   if executable ==# '_'
@@ -363,7 +417,7 @@ function! dispatch#compile_command(bang, args, count) abort
       let request.command = &makeprg . ' ' . request.args
     endif
     let request.format = &errorformat
-    let request.compiler = get((empty(&l:makeprg) ? g: : b:), 'current_compiler', '')
+    let request.compiler = s:current_compiler()
   else
     let request.compiler = dispatch#compiler_for_program(args)
     if !empty(request.compiler)
@@ -371,6 +425,7 @@ function! dispatch#compile_command(bang, args, count) abort
     endif
     let request.command = args
   endif
+  let request.format = substitute(request.format, ',%-G%\.%#\%($\|,\@=\)', '', '')
   if a:count
     let request.command = substitute(request.command, '<lnum>'.s:flags, '\=fnamemodify(a:count, submatch(0)[6:-1])', 'g')
   else
@@ -521,7 +576,7 @@ function! dispatch#pid(request) abort
       return request.pid
     else
       let request.pid = 0
-      call delete(file)
+      call delete(file.'.pid')
     endif
   endif
 endfunction
@@ -589,7 +644,7 @@ endfunction
 
 function! s:open_quickfix(request, copen) abort
   let was_qf = &buftype ==# 'quickfix'
-  execute 'botright' (!empty(getqflist()) || a:copen) ? 'copen' : 'cwindow'
+  execute 'botright' (a:copen ? 'copen' : 'cwindow')
   if &buftype ==# 'quickfix' && !was_qf && !a:copen
     wincmd p
   endif

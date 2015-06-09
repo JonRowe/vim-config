@@ -54,7 +54,7 @@ function! s:dispatch(dir, app, bang, args) abort
   let cwd = getcwd()
   let [mp, efm, cc] = [&l:mp, &l:efm, get(b:, 'current_compiler', '')]
   try
-    let &mp = s:prepare(a:args, a:app)
+    let &l:mp = s:prepare(a:args, a:app)
     if a:args =~# '^\s*\%(run\|console\)\>:\@!' && substitute(a:args, '-- .*', '', '') !~# ' -d\>'
       execute cd '~'
       let title = empty(a:app) ? 'heroku' : a:app
@@ -66,9 +66,9 @@ function! s:dispatch(dir, app, bang, args) abort
       endif
     else
       let b:current_compiler = 'heroku'
-      let &l:efm = '%+G%.%#'
+      let &l:efm = '%+I%.%#'
       execute cd fnameescape(a:dir)
-      execute (exists(':Make') == 2 ? 'Make' : 'make').a:bang
+      execute (exists(':Make') == 2 ? 'Make'.a:bang : 'make!')
     endif
   finally
     let [&l:mp, &l:efm, b:current_compiler] = [mp, efm, cc]
