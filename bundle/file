@@ -1,16 +1,25 @@
-Bundle 'surround.vim'
-Bundle 'Align'
-Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-endwise'
-Bundle 'tpope/vim-dispatch'
-Bundle 'tpope/vim-heroku'
-Bundle 'tpope/vim-haml'
-Bundle 'Lokaltog/powerline'
-Bundle 'christoomey/vim-tmux-navigator'
-Bundle 'terryma/vim-multiple-cursors'
-Bundle 'Shougo/unite.vim'
-Bundle 'elixir-lang/vim-elixir'
-Bundle 'bogado/file-line'
-Bundle 'AnsiEsc.vim'
-Bundle 'tpope/vim-obsession'
-Bundle 'slim-template/vim-slim'
+" Text transformation
+Plugin 'surround.vim'
+Plugin 'Align'
+" Adds end et al
+Plugin 'tpope/vim-endwise'
+
+" Git
+Plugin 'tpope/vim-fugitive'
+
+" UI
+Plugin 'Lokaltog/powerline'
+Plugin 'christoomey/vim-tmux-navigator'
+Plugin 'terryma/vim-multiple-cursors'
+
+" File opening
+Plugin 'bogado/file-line'
+
+" Language extentions
+Plugin 'elixir-lang/vim-elixir'
+Plugin 'slim-template/vim-slim'
+Plugin 'tpope/vim-haml'
+Plugin 'AnsiEsc.vim'
+
+" Persistant sessions
+Plugin 'tpope/vim-obsession'

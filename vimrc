@@ -4,21 +4,20 @@ setlocal spell spelllang=en_gb
 " Vundle config
 filetype off
 
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
 
-" let Vundle manage Vundle
-" required! 
-Bundle 'gmarik/vundle'
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
 
 " Include user's local vim config
 if filereadable(expand("~/.vim/bundle/file"))
   source ~/.vim/bundle/file
 endif
 
-" load the plugin and indent settings for the detected filetype
-filetype plugin indent on
-
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
 " End Vundle Config
 
 " My Config
