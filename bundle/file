@@ -17,6 +17,8 @@ Plugin 'terryma/vim-multiple-cursors'
 
 " File opening
 Plugin 'bogado/file-line'
+Plugin 'compactcode/alternate.vim'
+Plugin 'compactcode/open.vim'
 
 " Language extentions
 Plugin 'elixir-lang/vim-elixir'
