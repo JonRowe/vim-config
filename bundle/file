@@ -25,6 +25,7 @@ Plugin 'elixir-lang/vim-elixir'
 Plugin 'slim-template/vim-slim'
 Plugin 'tpope/vim-haml'
 Plugin 'AnsiEsc.vim'
+Plugin 'mtscout6/vim-cjsx'
 
 " Persistant sessions
 Plugin 'tpope/vim-obsession'
