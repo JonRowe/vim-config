@@ -4,6 +4,9 @@ Plugin 'Align'
 " Adds end et al
 Plugin 'tpope/vim-endwise'
 
+" Tab completion
+Plugin 'ervandew/supertab'
+
 " Git
 Plugin 'tpope/vim-fugitive'
 
