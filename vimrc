@@ -87,6 +87,7 @@ colorscheme solarized
 let ruby_space_errors = 1
 let ruby_no_expensive = 1
 
+" Searching
 let g:ackprg = 'ag --nogroup --nocolor --column'
 
 " Key remaps
