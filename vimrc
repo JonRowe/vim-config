@@ -118,6 +118,10 @@ fun! Start()
       \ norelativenumber
 
   " Now we can just write to the buffer, whatever you want.
+  call append('$', 'New Stuff!')
+  call append('$', "  * Ctrl-T opens alternate files (test/code)")
+  call append('$', "  * Ctrl-N does multiple curser")
+  call append('$', "  * tab completion!")
 
   " No modifications to this buffer
   setlocal nomodifiable nomodified
