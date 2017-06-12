@@ -88,3 +88,7 @@ let ruby_space_errors = 1
 let ruby_no_expensive = 1
 
 let g:ackprg = 'ag --nogroup --nocolor --column'
+
+" Key remaps
+" ctrl t opens tests
+map <C-T> :OpenVertical(alternate#FindAlternate())<CR>
